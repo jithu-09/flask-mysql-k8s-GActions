@@ -22,4 +22,13 @@ spec:
         env:
         - name: MYSQL_DATABASE_HOST
           value: db
+      initContainers:
+      - name: wait-for-db
+        image: busybox
+        command:
+          [
+            "sh",
+            "-c",
+            "until nc -z db 3306; do echo waiting for db; sleep 3; done;"
+          ]
 
