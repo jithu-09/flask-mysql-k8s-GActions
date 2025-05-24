@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: jk0909/flask-mysql:f6021c330e7885dd8b2d6cb44603a81e6c702497
+        image: jk0909/flask-mysql:ffae90ee8e294036abba2f74eea4c7ae56068fa9
         ports:
         - containerPort: 5000
         env:
@@ -24,7 +24,7 @@ spec:
           value: db
       initContainers:
       - name: wait-for-db
-        image: busybox
+        image: jk0909/flask-mysql:ffae90ee8e294036abba2f74eea4c7ae56068fa9
         command:
           [
             "sh",
