@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    image: jk0909/flask-mysql:v1
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_DATABASE_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: employee_db
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: Passw0rd
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
