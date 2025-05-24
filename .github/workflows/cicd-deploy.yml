@@ -1,0 +1,39 @@
+name: build and push docker image
+
+on:
+  # push:
+  #   branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docker-build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Docker login
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and tag image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-mysql:${{ github.sha }} .
+
+      - name: Push image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/flask-mysql:${{ github.sha }}
+
+      # Optional: Update manifest with new image tag (so ArgoCD can detect it)
+      - name: Update and commit new image tag
+        run: |
+          sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/flask-mysql:${{ github.sha }}|g" k8s/web-deploy.yaml
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add k8s/web-deploy.yaml
+          git commit -m "Update image tag to ${{ github.sha }}"
+          git push origin main
