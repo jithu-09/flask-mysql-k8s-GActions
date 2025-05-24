@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: jk0909/flask-mysql:v1
+        image: jk0909/flask-mysql:f6021c330e7885dd8b2d6cb44603a81e6c702497
         ports:
         - containerPort: 5000
         env:
