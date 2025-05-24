@@ -34,7 +34,7 @@ jobs:
           sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/flask-mysql:${{ github.sha }}|g" k8s/web-deploy.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git remote add origin https://${{ secrets.TOKEN }}@github.com/jithu-09/flask-mysql-k8s-GActions.git
+          git remote set-url origin https://${{ secrets.TOKEN }}@github.com/jithu-09/flask-mysql-k8s-GActions.git
           git add k8s/web-deploy.yaml
           git commit -m "Update image tag to ${{ github.sha }}"
           git push origin main
